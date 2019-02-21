@@ -58,12 +58,10 @@ io.on('connection', socket => {
     });
   });
 });
+const port = normalizePort(process.env.PORT || '3000');
+http.listen(port);
 
-http.listen(3000, () => {
-	console.log('listening on *:3000');
-});
-
-const tunnel = localtunnel(3000, (err, tunnel) => {
+/* const tunnel = localtunnel(3000, (err, tunnel) => {
 	if (err) {
 		console.log(error);
 	} else {
@@ -75,3 +73,4 @@ const tunnel = localtunnel(3000, (err, tunnel) => {
 tunnel.on('close', () => {
 	// tunnels are closed
 });
+ */
