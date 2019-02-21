@@ -85,7 +85,7 @@ class Person {
   };
 
   display() {
-    this.p5.fill(this.fill);
+    this.p5.fill(this.fill[0], this.fill[1], this.fill[2]);
     this.p5.ellipse(this.pos.x, this.pos.y, this.diameter, this.diameter);
   };
 }

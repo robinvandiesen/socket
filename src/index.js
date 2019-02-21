@@ -1,9 +1,11 @@
 import p5 from 'p5';
 import io from 'socket.io-client';
 import Person from './person';
+import * as dat from 'dat.gui';
 
 document.addEventListener("DOMContentLoaded", () => {
   const socket = io();
+  var gui = new dat.GUI();
 
   new p5(
     (sketch) => {
@@ -30,22 +32,29 @@ document.addEventListener("DOMContentLoaded", () => {
         sketch.background(40);
         socket.emit('add user', yourId);
 
+        let noiseIndex = 0;
         socket.on('mouse', (data) => {
-          // Draw a blue circle
-          sketch.fill(sketch.random(0, 255), sketch.random(0, 255), sketch.random(0, 255));
+          noiseIndex += 0.2;
+          const red = sketch.map(data.x, 0, sketch.width, 0, 255);
+          const green = sketch.map(data.y, 0, sketch.height, 0, 255);
+          const blue = sketch.noise(noiseIndex) * 255;
+
+          sketch.fill(red, green, blue);
           sketch.noStroke();
           sketch.ellipse(data.x, data.y, 80, 80);
         });
 
         socket.on('user joined', (data) => {
-          const color = data.id !== yourId ? 100 : 255;
+          const color = data.id !== yourId ? [100, 100, 100] : [255, 255, 255];
           people[data.id] = createUser(data.id, color);
+
+          gui.addColor(people[data.id], 'fill');
+          gui.add(people[data.id], 'diameter', 10, 50);
 
           if (firstTime) {
             Object.keys(data.users).forEach((person) => {
               if (parseInt(person) !== yourId) {
                 people[person] = createUser(person, 100);
-                console.log(people[person]);
               }
               firstTime = false;
             });
@@ -84,8 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(people).forEach((person) => {
           people[person].draw();
         });
-
+    
         if (!firstTime) {
+          people[yourId].diameter = Math.cos(Date.now() / 1000) * 25 + 25;
+          gui.updateDisplay();
           socket.emit('update user', people[yourId].pos);
         }
       };
