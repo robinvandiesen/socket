@@ -1,0 +1,20 @@
+{
+	"dependencies": {
+		"@babel/core": "^7.2.2",
+		"@babel/preset-env": "^7.3.1",
+		"babel-loader": "^8.0.5",
+		"express": "4.15.2",
+		"localtunnel": "^1.9.1",
+		"p5": "^0.7.3",
+		"socket.io": "^2.2.0",
+		"socket.io-client": "^2.2.0",
+		"webpack": "^4.29.3"
+	},
+	"devDependencies": {
+		"webpack-cli": "^3.2.3"
+	},
+	"scripts": {
+		"dev": "npx webpack --watch",
+		"start": "node server.js"
+	}
+}
