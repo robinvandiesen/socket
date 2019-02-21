@@ -75,10 +75,11 @@ io.on('connection', socket => {
     });
   });
 
-  socket.on('update user', (pos) => {
+  socket.on('update user', (pos, diameter) => {
     socket.broadcast.emit('user moved', {
       id: socket.id,
       pos: pos,
+      diameter: diameter,
     });
   });
 });

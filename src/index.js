@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let people = {};
       let firstTime = true;
       let yourId = Date.now();
+      let noiseIndex = 0;
 
       const createUser = (id, color) => {
         return new Person({
@@ -32,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         sketch.background(40);
         socket.emit('add user', yourId);
 
-        let noiseIndex = 0;
         socket.on('mouse', (data) => {
           noiseIndex += 0.2;
           const red = sketch.map(data.x, 0, sketch.width, 0, 255);
@@ -48,10 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const color = data.id !== yourId ? [100, 100, 100] : [255, 255, 255];
           people[data.id] = createUser(data.id, color);
 
-          gui.addColor(people[data.id], 'fill');
-          gui.add(people[data.id], 'diameter', 10, 50);
-
           if (firstTime) {
+            gui.addColor(people[data.id], 'fill');
+            gui.add(people[data.id], 'diameter', 10, 50);
             Object.keys(data.users).forEach((person) => {
               if (parseInt(person) !== yourId) {
                 people[person] = createUser(person, 100);
@@ -64,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.on('user moved', (data) => {
           if (!firstTime) {
             people[data.id].pos.set(sketch.createVector(data.pos.x, data.pos.y));
+            people[data.id].diameter = data.diameter;
           }
         });
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!firstTime) {
           people[yourId].diameter = Math.cos(Date.now() / 1000) * 25 + 25;
           gui.updateDisplay();
-          socket.emit('update user', people[yourId].pos);
+          socket.emit('update user', people[yourId].pos, people[yourId].diameter);
         }
       };
     }
