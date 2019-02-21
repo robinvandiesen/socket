@@ -4,8 +4,28 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const localtunnel = require('localtunnel');
 
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.use(express.static('dist'));
@@ -16,7 +36,7 @@ let users = {};
 io.on('connection', socket => {
   let addedUser = false;
 
-	// When the user disconnects
+  // When the user disconnects
   socket.on('disconnect', () => {
     if (addedUser) {
       delete users[socket.id];
@@ -29,18 +49,18 @@ io.on('connection', socket => {
       });
     }
   });
-  
+
   socket.on('add user', (id) => {
     if (addedUser) return;
 
     // Store the id in the socket session for this client
     socket.id = id;
     addedUser = true;
-    users = { 
-      ...users, 
-      [id]: { 
-        name: 'jim' 
-      } 
+    users = {
+      ...users,
+      [id]: {
+        name: 'jim'
+      }
     };
 
     // Echo globally (all clients) that a person has connected
