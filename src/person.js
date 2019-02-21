@@ -10,6 +10,7 @@ class Person {
     this.acc = createVector(0, 0);
     this.fill = fill;
     this.diameter = 10;
+    this.gravity = 1;
     this.acceleration = acceleration;
     this.radius = this.diameter / 2;
     this.maxSpeed = maxSpeed;
@@ -21,7 +22,12 @@ class Person {
     this.acc.add(f);
   };
 
-  draw() {
+  draw(forces) {
+    if (forces) {
+      Object.keys(forces).forEach((force) => {
+        this.applyForce(forces[force]);
+      });
+    }
     this.display();
     this.update();
     this.edges();

@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             gui.add(people[data.id], 'diameter', 10, 50);
             Object.keys(data.users).forEach((person) => {
               if (parseInt(person) !== yourId) {
-                people[person] = createUser(person, 100);
+                people[person] = createUser(person, [100, 100, 100]);
               }
               firstTime = false;
             });
@@ -91,9 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
       sketch.draw = () => {
         //sketch.background(40);
         Object.keys(people).forEach((person) => {
-          people[person].draw();
+          people[person].draw({
+            wind: sketch.createVector(0.1, 0),
+            gravity: sketch.createVector(0, 0.2)
+          });
         });
-    
+
         if (!firstTime) {
           people[yourId].diameter = Math.cos(Date.now() / 1000) * 25 + 25;
           gui.updateDisplay();
