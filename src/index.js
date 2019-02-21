@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sketch.setup = () => {
         sketch.createCanvas(window.innerWidth, window.innerHeight);
+        sketch.background(40);
         socket.emit('add user', yourId);
 
         socket.on('mouse', (data) => {

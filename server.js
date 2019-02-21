@@ -51,15 +51,12 @@ io.on('connection', socket => {
   });
 
   socket.on('mouse', (data) => {
-    // Data comes in as whatever was sent, including objects
-    console.log("Received: 'mouse' " + data.x + " " + data.y);
-    // Send it to all other clients
     socket.broadcast.emit('mouse', data);
   });
 
   socket.on('add user', (id) => {
     if (addedUser) return;
-
+    
     // Store the id in the socket session for this client
     socket.id = id;
     addedUser = true;
@@ -79,7 +76,7 @@ io.on('connection', socket => {
   });
 
   socket.on('update user', (pos) => {
-    io.emit('user moved', {
+    socket.broadcast.emit('user moved', {
       id: socket.id,
       pos: pos,
     });
