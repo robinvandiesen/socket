@@ -29,6 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
         sketch.createCanvas(window.innerWidth, window.innerHeight);
         socket.emit('add user', yourId);
 
+        socket.on('mouse', (data) => {
+          // Draw a blue circle
+          sketch.fill(sketch.random(0, 255), sketch.random(0, 255), sketch.random(0, 255));
+          sketch.noStroke();
+          sketch.ellipse(data.x, data.y, 80, 80);
+        });
+
         socket.on('user joined', (data) => {
           const color = data.id !== yourId ? 100 : 255;
           people[data.id] = createUser(data.id, color);
@@ -61,8 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       };
 
+      sketch.mouseDragged = () => {
+        // Make a little object with mouseX and mouseY
+        let data = {
+          x: sketch.mouseX,
+          y: sketch.mouseY
+        };
+        // Send that object to the socket
+        socket.emit('mouse', data);
+      }
+
       sketch.draw = () => {
-        sketch.background(40);
+        //sketch.background(40);
         Object.keys(people).forEach((person) => {
           people[person].draw();
         });
