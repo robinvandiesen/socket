@@ -9,44 +9,38 @@ document.addEventListener("DOMContentLoaded", () => {
     (sketch) => {
       let people = {};
       let firstTime = true;
-      let localId = Date.now();
+      let yourId = Date.now();
+
+      const createUser = (id, color) => {
+        return new Person({
+          id: id,
+          userId: yourId,
+          p5: sketch,
+          x: 50,
+          y: 50,
+          maxForce: 10,
+          maxSpeed: 5,
+          acceleration: 1,
+          fill: color,
+        });
+      }
 
       sketch.setup = () => {
         sketch.createCanvas(window.innerWidth, window.innerHeight);
-        socket.emit('add user', localId);
+        socket.emit('add user', yourId);
 
         socket.on('user joined', (data) => {
-          console.log(data.id, 'joined');
-          console.log(data);
-
-          people[data.id] = new Person({
-            id: data.id,
-            userId: localId,
-            p5: sketch,
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            maxForce: 10,
-            maxSpeed: 5,
-            acceleration: 1,
-            fill: 255,
-          });
+          const color = data.id !== yourId ? 100 : 255;
+          people[data.id] = createUser(data.id, color);
 
           if (firstTime) {
             Object.keys(data.users).forEach((person) => {
-              people[person] = new Person({
-                id: person,
-                userId: localId,
-                p5: sketch,
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                maxForce: 10,
-                maxSpeed: 5,
-                acceleration: 1,
-                fill: 100,
-              });
+              if (parseInt(person) !== yourId) {
+                people[person] = createUser(person, 100);
+                console.log(people[person]);
+              }
+              firstTime = false;
             });
-
-            firstTime = false;
           }
         });
 
@@ -57,13 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         socket.on('user left', (data) => {
-          console.log(data.id, 'left');
-          console.log(data);
           delete people[data.id];
         });
 
         socket.on('reconnect', () => {
-          console.log('you have been reconnected');
           if (id) {
             socket.emit('add user', id);
           }
@@ -77,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (!firstTime) {
-          socket.emit('update user', people[localId].pos);
+          socket.emit('update user', people[yourId].pos);
         }
       };
     }
