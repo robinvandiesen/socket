@@ -76,8 +76,8 @@ io.on('connection', socket => {
   });
 
   socket.on('update user', (settings) => {
+    if (socket.id === settings.id) return;
     socket.broadcast.emit('user updated', {
-      id: socket.id,
       ...settings
     });
   });

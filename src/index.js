@@ -65,11 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         socket.on('user updated', (data) => {
           if (!firstTime) {
-            if(data.id !== yourId) {
-              people[data.id].pos.set(createVector(data.pos.x, data.pos.y));
-              people[data.id].diameter = data.diameter;
-              people[data.id].fill = data.fill;
-            }
+            people[data.id].pos.set(createVector(data.pos.x, data.pos.y));
+            people[data.id].diameter = data.diameter;
+            people[data.id].fill = data.fill;
           }
         });
 
@@ -109,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!firstTime) {
           people[yourId].diameter = Math.cos(Date.now() / 1000) * 25 + 26;
           socket.emit('update user', {
+            id: yourId,
             pos: people[yourId].pos,
             diameter: people[yourId].diameter,
             fill: people[yourId].fill,
