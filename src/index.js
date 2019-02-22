@@ -17,6 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
         createVector
       } = sketch;
 
+      const projectSettings = {
+        forces: {
+          wind: createVector(0.1, 0),
+          gravity: createVector(0, 0.2),
+        },
+        vehicles: people,
+      }
+
       const createUser = (id, color) => {
         return new Person({
           id: id,
@@ -65,9 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         socket.on('user updated', (data) => {
           if (!firstTime) {
-            people[data.id].pos.set(createVector(data.pos.x, data.pos.y));
-            people[data.id].diameter = data.diameter;
-            people[data.id].fill = data.fill;
+            if (data.id !== yourId) {
+              people[data.id].pos = createVector(data.pos.x, data.pos.y);
+              people[data.id].diameter = data.diameter;
+              people[data.id].fill = data.fill;
+              people[data.id].draw(projectSettings);
+            }
           }
         });
 
@@ -79,6 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
           if (id) {
             socket.emit('add user', id);
           }
+        });
+
+        Object.keys(people).forEach((person) => {
+          people[person].draw(projectSettings);
         });
       };
 
@@ -94,17 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sketch.draw = () => {
         //sketch.background(40);
-        Object.keys(people).forEach((person) => {
-          people[person].draw({
-            forces: {
-              wind: createVector(0.1, 0),
-              gravity: createVector(0, 0.2),
-            },
-            vehicles: people,
-          });
-        });
-
         if (!firstTime) {
+          people[yourId].draw(projectSettings);
           people[yourId].diameter = Math.cos(Date.now() / 1000) * 25 + 26;
           socket.emit('update user', {
             id: yourId,
