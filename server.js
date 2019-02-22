@@ -75,26 +75,25 @@ io.on('connection', socket => {
     });
   });
 
-  socket.on('update user', (pos, diameter) => {
-    socket.broadcast.emit('user moved', {
+  socket.on('update user', (settings) => {
+    socket.broadcast.emit('user updated', {
       id: socket.id,
-      pos: pos,
-      diameter: diameter,
+      ...settings
     });
   });
 });
 const port = normalizePort(process.env.PORT || '3000');
 http.listen(port);
 
-const tunnel = localtunnel(3000, (err, tunnel) => {
-	if (err) {
-		console.log(error);
-	} else {
-		console.log(tunnel.url);
-		tunnel.url;
-	}
-});
+// const tunnel = localtunnel(3000, (err, tunnel) => {
+// 	if (err) {
+// 		console.log(error);
+// 	} else {
+// 		console.log(tunnel.url);
+// 		tunnel.url;
+// 	}
+// });
 
-tunnel.on('close', () => {
-	// tunnels are closed
-});
+// tunnel.on('close', () => {
+// 	// tunnels are closed
+// });

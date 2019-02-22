@@ -26,7 +26,7 @@ class Person {
 
   draw({forces, vehicles}) {
     if (vehicles) {
-      this.separate(vehicles);
+      this.collision(vehicles);
     }
 
     if (forces) {
@@ -34,6 +34,7 @@ class Person {
         this.applyForce(forces[force]);
       });
     }
+
     this.display();
     this.update();
     this.edges();
@@ -96,7 +97,7 @@ class Person {
     }
   };
 
-  separate(vehicles) {
+  collision(vehicles) {
     const { createVector } = this.p5;
     let desiredSeparation = this.diameter;
     let sum = createVector();
