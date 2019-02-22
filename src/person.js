@@ -9,8 +9,10 @@ class Person {
     this.vel = createVector(0, 0);
     this.acc = createVector(0, 0);
     this.fill = fill;
-    this.diameter = 10;
+    this.mass = 10;
+    this.diameter = 20;
     this.gravity = 1;
+    this.maxForce = 10;
     this.acceleration = acceleration;
     this.radius = this.diameter / 2;
     this.maxSpeed = maxSpeed;
@@ -18,11 +20,15 @@ class Person {
   }
 
   applyForce(force) {
-    let f = p5Static.Vector.div(force, 10);
+    let f = p5Static.Vector.div(force, this.mass);
     this.acc.add(f);
   };
 
-  draw(forces) {
+  draw({forces, vehicles}) {
+    if (vehicles) {
+      this.separate(vehicles);
+    }
+
     if (forces) {
       Object.keys(forces).forEach((force) => {
         this.applyForce(forces[force]);
@@ -89,6 +95,38 @@ class Person {
       this.vel.x *= -1;
     }
   };
+
+  separate(vehicles) {
+    const { createVector } = this.p5;
+    let desiredSeparation = this.diameter;
+    let sum = createVector();
+    let count = 0;
+    let i = 0;
+
+    Object.keys(vehicles).forEach((vehicle) => {
+      const d = p5Static.Vector.dist(this.pos, vehicles[vehicle].pos);
+
+      if ((d > 0) && (d < desiredSeparation)) {
+        // Calculate vector pointing away from neighbor
+        const diff = p5Static.Vector.sub(this.pos, vehicles[vehicle].pos);
+        diff.normalize();
+        diff.div(d);
+        sum.add(diff);
+        count++;
+      }
+    });
+ 
+    if (count > 0) {
+      sum.div(count);
+      sum.normalize();
+      sum.mult(this.maxSpeed);
+
+      // Implement Reynolds: Steering = Desired - Velocity
+      let steer = p5Static.Vector.sub(sum, this.velocity);
+      steer.limit(this.maxForce);
+      this.applyForce(steer);
+    }
+  }
 
   display() {
     this.p5.fill(this.fill[0], this.fill[1], this.fill[2]);
