@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } = sketch;
 
       const projectSettings = {
-        // forces: {
-        //   wind: createVector(0.1, 0),
-        //   gravity: createVector(0, 0.2),
-        // },
+        forces: {
+          wind: createVector(0.1, 0),
+          gravity: createVector(0, 0.2),
+        },
         vehicles: people,
       }
 
