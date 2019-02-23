@@ -25,6 +25,9 @@ class Person {
   };
 
   draw({forces, vehicles}) {
+    this.display();
+    if (this.userId !== this.id) return;
+
     if (vehicles) {
       this.collision(vehicles);
     }
@@ -35,14 +38,11 @@ class Person {
       });
     }
 
-    this.display();
     this.update();
     this.edges();
   }
 
   userInput() {
-    if (this.userId !== this.id) return;
-
     const {
       keyIsDown,
       createVector,

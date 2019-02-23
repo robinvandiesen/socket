@@ -30,7 +30,6 @@ app.get('/', (req, res) => {
 
 app.use(express.static('dist'));
 
-let numUsers = 0;
 let users = {};
 
 io.on('connection', socket => {
@@ -44,7 +43,6 @@ io.on('connection', socket => {
       // Echo globally that this client has left
       socket.broadcast.emit('user left', {
         id: socket.id,
-        numUsers: --numUsers,
         users,
       });
     }
@@ -70,20 +68,20 @@ io.on('connection', socket => {
     // Echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       id: socket.id,
-      numUsers: ++numUsers,
       users,
     });
   });
 
   socket.on('update user', (settings) => {
     socket.broadcast.emit('user updated', {
+      id: socket.id,
       ...settings
     });
   });
 });
 const port = normalizePort(process.env.PORT || '3000');
 http.listen(port);
-/* 
+
 const tunnel = localtunnel(3000, (err, tunnel) => {
 	if (err) {
 		console.log(error);
@@ -95,4 +93,4 @@ const tunnel = localtunnel(3000, (err, tunnel) => {
 
 tunnel.on('close', () => {
 	// tunnels are closed
-}); */
+});
