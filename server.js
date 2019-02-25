@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const localtunnel = require('localtunnel');
 
 /**
  * Normalize a port into a number, string, or false.
@@ -81,16 +80,3 @@ io.on('connection', socket => {
 });
 const port = normalizePort(process.env.PORT || '3000');
 http.listen(port);
-
-const tunnel = localtunnel(3000, (err, tunnel) => {
-	if (err) {
-		console.log(error);
-	} else {
-		console.log(tunnel.url);
-		tunnel.url;
-	}
-});
-
-tunnel.on('close', () => {
-	// tunnels are closed
-});

@@ -17,6 +17,11 @@ class Person {
     this.radius = this.diameter / 2;
     this.maxSpeed = maxSpeed;
     this.p5 = p5;
+
+    this.alphaInput = document.getElementById('alpha');
+    this.betaInput = document.getElementById('beta');
+
+    window.addEventListener("deviceorientation", (event) => this.userInput(event), true);
   }
 
   applyForce(force) {
@@ -24,7 +29,7 @@ class Person {
     this.acc.add(f);
   };
 
-  draw({forces, vehicles}) {
+  draw({ forces, vehicles }) {
     this.display();
     if (this.userId !== this.id) return;
 
@@ -42,7 +47,8 @@ class Person {
     this.edges();
   }
 
-  userInput() {
+  userInput(event) {
+    if (this.userId !== this.id) return;
     const {
       keyIsDown,
       createVector,
@@ -71,6 +77,19 @@ class Person {
       const moveDown = createVector(0, this.acceleration);
       this.applyForce(moveDown);
     }
+
+
+    let x = event ? event.beta : 0;
+    let y = event ? event.gamma : 0;
+
+    // x = this.p5.map(x, -180, 180, -50, 50);
+    // y = this.p5.map(x, -90, 90, -45, 45);
+
+    const xy = createVector(y * 0.5, x * 0.5);
+
+    this.betaInput.value = x;
+    this.alphaInput.value = y;
+    this.applyForce(xy);
   }
 
   update() {
@@ -102,7 +121,6 @@ class Person {
     let desiredSeparation = this.diameter;
     let sum = createVector();
     let count = 0;
-    let i = 0;
 
     Object.keys(vehicles).forEach((vehicle) => {
       const d = p5Static.Vector.dist(this.pos, vehicles[vehicle].pos);
@@ -116,7 +134,7 @@ class Person {
         count++;
       }
     });
- 
+
     if (count > 0) {
       sum.div(count);
       sum.normalize();

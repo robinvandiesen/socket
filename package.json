@@ -6,6 +6,7 @@
 		"dat.gui": "^0.7.5",
 		"express": "4.15.2",
 		"localtunnel": "^1.9.1",
+		"ngrok": "^3.1.1",
 		"p5": "^0.7.3",
 		"socket.io": "^2.2.0",
 		"socket.io-client": "^2.2.0",
@@ -15,7 +16,8 @@
 		"webpack-cli": "^3.2.3"
 	},
 	"scripts": {
-		"dev": "npx webpack --watch",
+    "dev": "npx webpack --watch",
+    "external": "npx ngrok http 3000",
 		"start": "node server.js"
 	}
 }

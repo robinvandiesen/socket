@@ -5,7 +5,7 @@ import * as dat from 'dat.gui';
 
 document.addEventListener("DOMContentLoaded", () => {
   const socket = io();
-  var gui = new dat.GUI();
+  const gui = new dat.GUI();
 
   new p5(
     (sketch) => {
@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } = sketch;
 
       const projectSettings = {
-        forces: {
-          wind: createVector(0.1, 0),
-          gravity: createVector(0, 0.2),
-        },
+        // forces: {
+        //   wind: createVector(0.1, 0),
+        //   gravity: createVector(0, 0.2),
+        // },
         vehicles: people,
       }
 
