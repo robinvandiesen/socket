@@ -18,10 +18,9 @@ class Person {
     this.maxSpeed = maxSpeed;
     this.p5 = p5;
 
-    this.alphaInput = document.getElementById('alpha');
-    this.betaInput = document.getElementById('beta');
-
-    window.addEventListener("deviceorientation", (event) => this.userInput(event), true);
+    if (this.userId === this.id) {
+      window.addEventListener("deviceorientation", (event) => this.userInput(event), true);
+    }
   }
 
   applyForce(force) {
@@ -48,7 +47,6 @@ class Person {
   }
 
   userInput(event) {
-    if (this.userId !== this.id) return;
     const {
       keyIsDown,
       createVector,
@@ -78,18 +76,15 @@ class Person {
       this.applyForce(moveDown);
     }
 
+    if (event) {
+      const x = event.beta;
+      const y = event.gamma;
+      const scaleX = 0.045;
+      const scaleY = 0.055;
+      const xy = createVector(y * scaleY, x * scaleX);
 
-    let x = event ? event.beta : 0;
-    let y = event ? event.gamma : 0;
-
-    // x = this.p5.map(x, -180, 180, -50, 50);
-    // y = this.p5.map(x, -90, 90, -45, 45);
-
-    const xy = createVector(y * 0.5, x * 0.5);
-
-    this.betaInput.value = x;
-    this.alphaInput.value = y;
-    this.applyForce(xy);
+      this.applyForce(xy);
+    }
   }
 
   update() {
@@ -149,6 +144,7 @@ class Person {
 
   display() {
     this.p5.fill(this.fill[0], this.fill[1], this.fill[2]);
+    this.p5.stroke(100, 100, 100);
     this.p5.ellipse(this.pos.x, this.pos.y, this.diameter, this.diameter);
   };
 }
