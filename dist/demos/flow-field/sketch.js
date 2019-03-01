@@ -6,7 +6,7 @@ let flowField;
 
 // An ArrayList of vehicles
 const vehicles = [];
-const vehicleAmount = 320;
+const vehicleAmount = 120;
 let vehicleSize = 2;
 let vehicleCohesive = 10;
 
@@ -26,12 +26,12 @@ function setup() {
 
   // Make a whole bunch of vehicles with random maxSpeed and maxForce values
   Array.from(Array(vehicleAmount)).map(() => {
-    vehicles.push(new Vehicle(random(width), random(height), 1, random(0.1, 0.5)));
+    vehicles.push(new Vehicle(random(width), random(height), random(2, 5), random(0.1, 0.5)));
   });
 }
 
 function draw() {
-  background(51);
+  background(0);
   // Display the flowField in "debug" mode
   if (debug) flowField.display();
 
