@@ -41,7 +41,7 @@ function setup() {
 
   // Make a whole bunch of vehicles with random maxSpeed and maxForce values
   Array.from(Array(vehicleAmount)).map(() => {
-    vehicles.push(new Vehicle(random(width), random(height), random(2, 3), random(0.1, 0.5)));
+    vehicles.push(new Vehicle(random(width), random(height), random(2, 4), random(0.1, 0.5)));
   });
 }
 
