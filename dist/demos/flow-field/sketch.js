@@ -8,7 +8,10 @@ let flowField;
 const vehicles = [];
 const vehicleAmount = 120;
 let vehicleSize = 2;
-let vehicleCohesive = 10;
+let vehicleSeparation = 1;
+let vehicleCohesive = 1;
+let vehicleAlignment = 1;
+let vehicleFlowField = false;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
@@ -20,13 +23,25 @@ function setup() {
     vehicleSize = parseInt(event.target.value, 10);
   });
   
-  document.getElementById('cohesive').addEventListener('change', (event) => {
+  document.getElementById('separation').addEventListener('change', (event) => {
+    vehicleSeparation = parseInt(event.target.value, 10);
+  });
+
+  document.getElementById('alignment').addEventListener('change', (event) => {
     vehicleCohesive = parseInt(event.target.value, 10);
+  });
+
+  document.getElementById('cohesive').addEventListener('change', (event) => {
+    vehicleAlignment = parseInt(event.target.value, 10);
+  });
+  
+  document.getElementById('flowfield').addEventListener('change', (event) => {
+    vehicleFlowField = event.target.checked;
   });
 
   // Make a whole bunch of vehicles with random maxSpeed and maxForce values
   Array.from(Array(vehicleAmount)).map(() => {
-    vehicles.push(new Vehicle(random(width), random(height), random(2, 5), random(0.1, 0.5)));
+    vehicles.push(new Vehicle(random(width), random(height), random(2, 3), random(0.1, 0.5)));
   });
 }
 
@@ -37,12 +52,18 @@ function draw() {
 
   // Tell all the vehicles to follow the flow field
   vehicles.map((vehicle) => {
-    vehicle
-    .follow(flowField)
-    .separate(vehicles)
-    .draw();
-    vehicle.size = vehicleSize;
+    vehicle.separation = vehicleSeparation;
     vehicle.cohesive = vehicleCohesive;
+    vehicle.aligning = vehicleAlignment;
+    vehicle.size = vehicleSize;
+
+    if (vehicleFlowField) {
+      vehicle.follow(flowField);
+    }
+
+    vehicle
+      .applyBehaviours(vehicles)
+      .draw();
   });
 }
 

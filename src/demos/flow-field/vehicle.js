@@ -2,11 +2,13 @@ function Vehicle(x, y, maxSpeed, maxForce) {
   this.position = createVector(x, y);
   this.acceleration = createVector(0, 0);
   this.velocity = createVector(0, 0);
-  this.size = 2; 
+  this.size = 2;
   this.mass = 1;
   this.maxSpeed = maxSpeed || 4;
   this.maxForce = maxForce || 0.1;
-  this.cohesive = 10;
+  this.separation = 1;
+  this.cohesive = 1;
+  this.aligning = 1;
 
   this.draw = function () {
     this.update();
@@ -14,9 +16,34 @@ function Vehicle(x, y, maxSpeed, maxForce) {
     this.display();
   }
 
+  this.applyForce = function (force) {
+    let f = p5.Vector.div(force, this.mass);
+    this.acceleration.add(f);
+  }
+
+  // We accumulate a new acceleration each time based on three rules
+  this.applyBehaviours = function (vehicles) {
+    const separate = this.separate(vehicles); // Separation
+    const alignment = this.align(vehicles);    // Alignment
+    const cohesion = this.cohesion(vehicles); // Cohesion
+
+    // Arbitrarily weight these forces
+    separate.mult(this.separation);
+    alignment.mult(this.cohesive);
+    cohesion.mult(this.aligning);
+
+    // Add the force vectors to acceleration
+    this.applyForce(separate);
+    this.applyForce(alignment);
+    this.applyForce(cohesion);
+
+    return this;
+  };
+
   this.follow = function (flowField) {
     const desired = flowField.lookup(this.position);
     desired.mult(this.maxSpeed);
+    // Implement Reynolds: Steering = Desired - Velocity
     const steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxForce);
     this.applyForce(steer);
@@ -25,20 +52,58 @@ function Vehicle(x, y, maxSpeed, maxForce) {
   }
 
   this.separate = function (vehicles) {
-    const desiredSeparation = this.size * this.cohesive;
-    const sum = createVector();
+    const desiredSeparation = 12 * this.size;
+    const steer = createVector(0, 0);
     let count = 0;
+    vehicles.map((vehicle) => {
+      var d = p5.Vector.dist(this.position, vehicle.position);
 
-    vehicles.map((vehicle, index) => {
-      const d = p5.Vector.dist(this.position, vehicle.position);
-
-      if (d > 0 && d < desiredSeparation) {
-        // Calculate vector pointing away from neighbor
-        const diff = p5.Vector.sub(this.position, vehicle.position);
+      if ((d > 0) && (d < desiredSeparation)) {
+        var diff = p5.Vector.sub(this.position, vehicle.position);
         diff.normalize();
         diff.div(d);
-        sum.add(diff);
-        count = index + 1;
+        steer.add(diff);
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      steer.div(count);
+    }
+
+    if (steer.mag() > 0) {
+      steer.normalize();
+      steer.mult(this.maxSpeed);
+      steer.sub(this.velocity);
+      steer.limit(this.maxForce);
+    }
+
+    return steer;
+  }
+
+  this.seek = function (target) {
+    const desired = p5.Vector.sub(target, this.position);
+    // Normalize desired and scale to maximum speed
+    desired.normalize();
+    desired.mult(this.maxSpeed);
+    // Steering = Desired minus Velocity
+    const steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxForce); // Limit to maximum steering force
+    return steer;
+  };
+
+  // Alignment
+  // For every nearby boid in the system, calculate the average velocity
+  this.align = function (vehicles) {
+    const neighborDist = 25 * this.size;
+    const sum = createVector(0, 0);
+    let count = 0;
+
+    vehicles.map((vehicle) => {
+      const d = p5.Vector.dist(this.position, vehicle.position);
+      if ((d > 0) && (d < neighborDist)) {
+        sum.add(vehicle.velocity);
+        count++;
       }
     });
 
@@ -46,18 +111,35 @@ function Vehicle(x, y, maxSpeed, maxForce) {
       sum.div(count);
       sum.normalize();
       sum.mult(this.maxSpeed);
-      // Implement Reynolds: Steering = Desired - Velocity
-      const steer = p5.Vector.sub(sum, this.velocity);
+      var steer = p5.Vector.sub(sum, this.velocity);
       steer.limit(this.maxForce);
-      this.applyForce(steer);
+      return steer;
+    } else {
+      return createVector(0, 0);
     }
-
-    return this;
   }
 
-  this.applyForce = function (force) {
-    let f = p5.Vector.div(force, this.mass);
-    this.acceleration.add(f);
+  // Cohesion
+  // For the average location (i.e. center) of all nearby vehicles, calculate steering vector towards that location
+  this.cohesion = function (vehicles) {
+    const neighborDist = 25 * this.size;
+    const sum = createVector(0, 0);
+    let count = 0;
+
+    vehicles.map((vehicle) => {
+      var d = p5.Vector.dist(this.position, vehicle.position);
+      if ((d > 0) && (d < neighborDist)) {
+        sum.add(vehicle.position);
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      sum.div(count);
+      return this.seek(sum);
+    } else {
+      return createVector(0, 0);
+    }
   }
 
   this.update = function () {

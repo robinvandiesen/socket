@@ -14,6 +14,11 @@
   <script src="sketch.js" type="text/javascript"></script>
 
   <style>
+    body,
+    html {
+      overflow: hidden;
+    }
+
     body {
       padding: 0;
       margin: 0;
@@ -29,11 +34,24 @@
   <div style="position: absolute; color: white;">
     <p>
       <label for="size">Size</label>
-      <input type="range" min="1" max="6" value="2" id="size">
+      <input type="range" min="1" max="6" step="0.1" value="2" id="size">
     </p>
     <p>
-      <label for="cohesive">Grouping</label>
-      <input type="range" min="0" max="100" value="10" id="cohesive"></p>
+      <label for="separation">Separation</label>
+      <input type="range" min="0" max="5" step="0.1" value="1" id="separation">
+    </p>
+    <p>
+      <label for="alignment">Alignment</label>
+      <input type="range" min="0" max="5" step="0.1" value="1" id="alignment">
+    </p>
+    <p>
+      <label for="cohesive">Cohesive</label>
+      <input type="range" min="0" max="5" step="0.1" value="1" id="cohesive">
+    </p>
+    <p>
+      <label for="cohesive">Flowfield</label>
+      <input type="checkbox" value="on" id="flowfield">
+    </p>
   </div>
 </body>
 
