@@ -31,7 +31,7 @@ function setup() {
 }
 
 function draw() {
-  background(51);
+  background(0);
   // Display the flowField in "debug" mode
   if (debug) flowField.display();
 

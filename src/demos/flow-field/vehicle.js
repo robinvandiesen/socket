@@ -76,7 +76,7 @@ function Vehicle(x, y, maxSpeed, maxForce) {
 
   this.display = function () {
     var theta = this.velocity.heading() + PI / 2;
-    const red = map(this.position.x, 0, width, 0, 255);
+    const red = map(this.position.x, 0, width, 0, 100);
     const green = 100;
     const blue = map(this.position.y, 0, height, 0, 255);
     fill([red, green, blue]);
