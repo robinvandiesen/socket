@@ -79,9 +79,9 @@ class Person {
     if (event) {
       const x = event.beta;
       const y = event.gamma;
-      const scaleX = 0.045;
-      const scaleY = 0.055;
-      const xy = createVector(y * scaleY, x * scaleX);
+      const scaleX = 0.05;
+      const scaleY = 0.0415;
+      const xy = createVector(y, x).normalize();
 
       this.applyForce(xy);
     }

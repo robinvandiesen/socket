@@ -2,7 +2,9 @@
 	"dependencies": {
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
+		"@types/copy-webpack-plugin": "^4.4.3",
 		"babel-loader": "^8.0.5",
+		"copy-webpack-plugin": "^5.0.0",
 		"dat.gui": "^0.7.5",
 		"express": "4.15.2",
 		"localtunnel": "^1.9.1",
@@ -16,8 +18,8 @@
 		"webpack-cli": "^3.2.3"
 	},
 	"scripts": {
-    "dev": "npx webpack --watch",
-    "external": "npx ngrok http 3000",
+		"dev": "npx webpack --watch",
+		"external": "npx ngrok http 3000",
 		"start": "node server.js"
 	}
 }
